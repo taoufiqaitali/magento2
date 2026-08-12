@@ -52,6 +52,11 @@ class UpdateCustomer
         CustomerInterface $customer,
         ?string $passwordHash = null
     ): array {
+        // POST is the createAccount route — skip to prevent password bypass without current password
+        if ($this->request->getMethod() === \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST) {
+            return [$customer, $passwordHash];
+        }
+
         $userType = $this->userContext->getUserType();
         $customerSessionId = (int)$this->userContext->getUserId();
         $customerId = (int)$this->request->getParam('customerId');
